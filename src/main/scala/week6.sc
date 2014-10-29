@@ -1,38 +1,24 @@
 import forcomp.Anagrams._
-
-
-
-
-
-
-
-
-
-wordOccurrences("skata")
-wordOccurrences("aposkata")
-def sentenceOccurrences(s: Sentence): Occurrences = wordOccurrences(s.mkString(""))
-sentenceOccurrences(List("skata", "aposkata", "sta"))
-
-//wordAnagrams("elvis")
-val test1 = combinations(sentenceOccurrences(List("aabb")))
-val test2 = sentenceOccurrences(List("aabb"))
-def combinations(occurrences: Occurrences): List[Occurrences] = {
-  occurrences.toSet[(Char,Int)].subsets.map(_.toList).toList
+def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
+  if (sentence.isEmpty) List(Nil)
+  else  {
+    //for (word <- combinations(sentence) )
+    List(sentence)
+  }
 }
-//val test3 = combinations(test2)
-def subtract(x: Occurrences, y: Occurrences): Occurrences = {
-  def subtractTerm(innerMap: Map[Char, Int], term: (Char, Int)): Map[Char, Int] = {
-    val (c, i) = term
-    if (innerMap(c) - i > 0)
-      innerMap + (c -> (innerMap(c) - i))
-    else innerMap - c
+sentenceAnagrams(List("I", "love", "you"))
+def testakas(sentence: Sentence): List[Sentence] = {
+  def loop(occ: Occurrences): List[Sentence] = {
+    if (occ.isEmpty) List(Nil)
+    else {
+      for {
+        word <- combinations(occ)
+        validWord <- dictionaryByOccurrences.getOrElse(word, Nil)
+        loopSentence <- loop(subtract(occ, wordOccurrences(validWord)))
+      } yield validWord :: loopSentence
+    }
   }
 
-  def subtr(xm: Map[Char, Int], ym: Map[Char, Int]) = {
-    (ym foldLeft xm)(subtractTerm)
-  }
-
-  subtr(x.toMap,y.toMap).toList.sorted
+  loop(sentenceOccurrences(sentence))
 }
-val finass = subtract(wordOccurrences("aposkata"), wordOccurrences("skata"))
-
+testakas(List("I", "love", "you", "fucking","bastard"))
